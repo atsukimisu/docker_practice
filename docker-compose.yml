@@ -1,0 +1,26 @@
+version: '3.0'
+services:
+  app:
+    container_name: "practice-api"
+    build: .
+    ports:
+      - 8080:8080
+    entrypoint: 
+      - "uvicorn"
+      - "main:app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "--reload"
+  db:
+    container_name: my-postgres-db
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init/init_postgres.sql:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
