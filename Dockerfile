@@ -10,6 +10,7 @@ RUN apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false upd
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+RUN pip install fastapi uvicorn sqlalchemy async-exit-stack async-generator
 
 COPY ./app/ .
 
