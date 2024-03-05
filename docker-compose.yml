@@ -14,7 +14,7 @@ services:
       - "8080"
       - "--reload"
   db:
-    container_name: my-postgres-db
+    container_name: db
     image: postgres:15
     restart: always
     ports:

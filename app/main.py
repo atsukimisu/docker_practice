@@ -10,12 +10,11 @@ DATABASE_URL = "postgresql://root:root@db:5432/postgres"
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
 
-users = Table(
-   'users', metadata,
-   Column('id', Integer, primary_key=True),
-   Column('name', String),
-   Column('email', String),
-)
+class User(BaseModel):
+    name: str
+    gender: str
+    height: float
+    birth_place: str
 
 app = FastAPI()
 
@@ -47,15 +46,15 @@ async def loadfile(file):
         "content": text
     }
 
-@app.on_event("startup")
-async def startup():
-    # Start up the app
-    app.state.db = SessionLocal()
+# @app.on_event("startup")
+# async def startup():
+#     # Start up the app
+#     app.state.db = SessionLocal()
 
-@app.on_event("shutdown")
-async def shutdown():
-    # Close db connection (if used with an async engine)
-    app.state.db.close()
+# @app.on_event("shutdown")
+# async def shutdown():
+#     # Close db connection (if used with an async engine)
+#     app.state.db.close()
 
 @app.post("/users/")
 async def create_user(name: str, email: str):
@@ -69,3 +68,37 @@ async def read_users():
     with app.state.db.begin() as transaction:
         result = transaction.execute(select([users]))
         return result.fetchall()
+
+
+# from fastapi import FastAPI
+# from pydantic import BaseModel
+# from sqlalchemy import create_engine, Table, MetaData
+# from sqlalchemy.orm import sessionmaker
+
+# DATABASE_URL = "postgresql://postgres:postgres@db:5432/test_db"
+
+# engine = create_engine(DATABASE_URL)
+# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# metadata = MetaData()
+# people = Table('people', metadata, autoload_with=engine)
+
+# app = FastAPI()
+
+# class Person(BaseModel):
+#     name: str
+#     gender: str
+#     height: float
+#     birthplace: str
+
+# @app.post("/people/")
+# def create_person(person: Person):
+#     with SessionLocal() as session:
+#         result = session.execute(people.insert().values(
+#             name=person.name,
+#             gender=person.gender,
+#             height=person.height,
+#             birthplace=person.birthplace
+#         ))
+#         session.commit()
+#         return {"id": result.inserted_primary_key[0]}
